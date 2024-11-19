@@ -19,5 +19,13 @@
 # Yellow: Sensor? Eye? Vision cone?
 # Purple: Reproduce
 
+import pygame as pg
 
+class Being:
+    grid = []
+    def __init__(self):
+        self.x, self.y = 0, 0
+
+    def draw(self, screen):
+        pg.draw.circle(screen, (255, 255, 255), (self.x, self.y), 10)
 
