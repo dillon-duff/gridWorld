@@ -9,6 +9,7 @@ Every block is a certain color and has a certain function
 ### Green
 - Move forward
 - Controlled by brain
+
 ### Red
 - Consumer
 - Controlled by brain
@@ -24,12 +25,21 @@ Every block is a certain color and has a certain function
 - Neutral
 
 ### Yellow
-- Sensor (eye)
+- Eye (sensor)
 - Sees a square of blocks, where the eye is one of the square's corners. So it can have 4 directions.
 - Always on
 
 ### Orange
 - Reproducer
+
+### Purple
+- Ear (sensor)
+- Hears a cone of blocks, where the ear is one of the cone's corners. So it can have 4 directions.
+- Always on
+
+### Pink
+- Communicator
+- Emits a sound in a cone of blocks, where the communicator is one of the cone's corners. So it can have 4 directions.
 
 Blocks eat food to survive.
 
@@ -68,4 +78,18 @@ Foods come in may forms
 ## Leaves
 - Very low energy
 - Regrows relatively quickly
+
+# Life Cycle
+
+
+Random instantiation for each Being as a random 3x3 grid of blocks.
+
+Food randomly spawns on the grid
+
+If two Beings meet, they can reproduce if they are touching and both activate their reproducer blocks.
+
+Brains are instantiated as networks with a neuron for each sensor, and outputs for each block that can perform an action.
+
+
+
 
