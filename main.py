@@ -1,22 +1,92 @@
 import pygame as pg
-from config import WIDTH, HEIGHT
+import numpy as np
+from constants import WIDTH, HEIGHT
 from being import Being
+
+class Grid:
+    def __init__(self, width, height, cell_size):
+        self.cell_size = cell_size
+        self.cols = width // cell_size
+        self.rows = height // cell_size
+        self.width = self.cols * cell_size
+        self.height = self.rows * cell_size
+        self.screen = pg.display.set_mode((self.width, self.height))
+        
+    def draw_cell(self, row, col, color):
+        """Draw a colored square at grid position (row, col)"""
+        pg.draw.rect(self.screen, color,
+                    (col * self.cell_size, 
+                     row * self.cell_size,
+                     self.cell_size,
+                     self.cell_size))
+    
+    def get_cell_from_pos(self, x, y):
+        """Convert screen coordinates to grid coordinates"""
+        col = x // self.cell_size
+        row = y // self.cell_size
+        if 0 <= row < self.rows and 0 <= col < self.cols:
+            return row, col
+        return None
+
+    def fill(self, color):
+        """Fill entire screen with color"""
+        self.screen.fill(color)
+
 pg.init()
 
-screen = pg.display.set_mode((WIDTH, HEIGHT))
+grid = Grid(WIDTH, HEIGHT, 50)
 clock = pg.time.Clock()
 
-beings = [Being() for _ in range(10)]
+being_grid = np.zeros((5, 5))
+
+being_grid[0, 1] = 1
+being_grid[0, 2] = 1
+being_grid[0, 3] = 1
+
+being_grid[1, 0] = 1
+being_grid[2, 0] = 1
+being_grid[3, 0] = 1
+
+being_grid[1, 4] = 1
+being_grid[2, 4] = 1
+being_grid[3, 4] = 1
+
+being_grid[4, 1] = 1
+being_grid[4, 2] = 1
+being_grid[4, 3] = 1
+
+being_grid[1, 1] = 2
+being_grid[1, 2] = 3
+being_grid[1, 3] = 2
+
+being_grid[2, 1] = 3
+being_grid[2, 2] = 4
+being_grid[2, 3] = 3
+
+being_grid[3, 1] = 2
+being_grid[3, 2] = 3
+being_grid[3, 3] = 2
+
+
+beings = [Being(100, 100, being_grid)]
 
 while True:
     for event in pg.event.get():
         if event.type == pg.QUIT:
             pg.quit()
             exit()
+        elif event.type == pg.MOUSEBUTTONDOWN:
+            mouse_pos = pg.mouse.get_pos()
+            cell = grid.get_cell_from_pos(*mouse_pos)
+            if cell:
+                row, col = cell
 
-    screen.fill((0, 0, 0))
+                print(row, col)
+
+    grid.fill((0, 0, 0))
+    
     for being in beings:
-        being.draw(screen)
+        being.draw(grid)
 
     pg.display.flip()
     clock.tick(60)

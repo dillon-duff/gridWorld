@@ -1,31 +1,22 @@
-# Contains colors/cell types and coordinates based on the relative 0,0 being the top left corner of the 'being'
-
-# Contains a neural network brain that receives inputs and outputs actions
-
-# Energy can be consumed and is consumed proportional to size, brain size/usage, and actions
-
-# Can interact with other beings
-
-# Can consume food to gain energy
-
-# Can reproduce with another being
-
-# Cell types (colors)
-# Green: Move forward
-# Red: Consume
-# Blue: Rotate
-# Gray: Do nothing
-# Brown: Shield
-# Yellow: Sensor? Eye? Vision cone?
-# Purple: Reproduce
-
 import pygame as pg
+import numpy as np
+from constants import color_map
+
+
+
+class Brain:
+    def __init__(self):
+        pass
+
 
 class Being:
-    grid = []
-    def __init__(self):
-        self.x, self.y = 0, 0
 
-    def draw(self, screen):
-        pg.draw.circle(screen, (255, 255, 255), (self.x, self.y), 10)
+    def __init__(self, x, y, init_grid):
+        self.x, self.y = x, y
+        self.grid = init_grid
 
+    def draw(self, grid):
+        for i in range(self.grid.shape[0]):
+            for j in range(self.grid.shape[1]):
+                if self.grid[i, j] != 0:
+                    grid.draw_cell(i, j, color_map[self.grid[i, j]]["rgb"])

@@ -7,7 +7,7 @@ Every block is a certain color and has a certain function
 ## Block Colors
 
 ### Green
-- Move forward
+- Move forward (moves the entire body in a direction)
 - Controlled by brain
 
 ### Red
@@ -15,11 +15,11 @@ Every block is a certain color and has a certain function
 - Controlled by brain
 
 ### Blue
-- Rotator
+- Rotator (local rotation, forcing a NxN area to be full of blocks to rotate)
 - Controlled by brain
 
 ### Gray
-- Shield
+- Shield (weighs more than neutral but otherwise functionally identical)
 
 ### Brown
 - Neutral
