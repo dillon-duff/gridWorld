@@ -2,6 +2,7 @@ import pygame as pg
 import numpy as np
 from constants import WIDTH, HEIGHT
 from being import Being
+from pygame.locals import *
 
 class Grid:
     def __init__(self, width, height, cell_size):
@@ -82,6 +83,17 @@ while True:
                 row, col = cell
 
                 print(row, col)
+
+    keys = pg.key.get_pressed()
+    for being in beings:
+        # Number keys 1-9 will activate different outputs
+        for i in range(9):
+            if keys[pg.K_1 + i]:
+                outputs = being.manual_activate(i)
+                if outputs is not None:
+                    activatable_blocks = being.get_activatable_blocks()
+                    print(f"Activated output {i}, affecting {len(activatable_blocks)} blocks")
+                    print(f"Block type was {activatable_blocks[i]}")
 
     grid.fill((0, 0, 0))
     
