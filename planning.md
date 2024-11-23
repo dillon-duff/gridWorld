@@ -90,6 +90,3 @@ If two Beings meet, they can reproduce if they are touching and both activate th
 
 Brains are instantiated as networks with a neuron for each sensor, and outputs for each block that can perform an action.
 
-
-
-

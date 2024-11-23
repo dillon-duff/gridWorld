@@ -34,7 +34,7 @@ class Grid:
 
 pg.init()
 
-grid = Grid(WIDTH, HEIGHT, 50)
+grid = Grid(WIDTH, HEIGHT, 5)
 clock = pg.time.Clock()
 
 being_grid = np.zeros((5, 5))

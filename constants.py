@@ -1,17 +1,30 @@
+from blocks import MoverBlock, ConsumerBlock, RotatorBlock, EyeBlock
+
 color_map = {
     3: {
-        "rgb": (0, 255, 0)
+        "name": "mover",
+        "color": "green",
+        "rgb": (0, 255, 0),
+        "block_class": MoverBlock
     },
     1: {
-        "rgb": (255, 0, 0)
+        "name": "consumer",
+        "color": "red",
+        "rgb": (255, 0, 0),
+        "block_class": ConsumerBlock
     },
     4: {
-        "rgb": (0, 0, 255)
+        "name": "rotator",
+        "color": "blue",
+        "rgb": (0, 0, 255),
+        "block_class": RotatorBlock
     },
     2: {
-        "rgb": (255, 255, 0)
+        "name": "eye",
+        "color": "yellow",
+        "rgb": (255, 255, 0),
+        "block_class": EyeBlock
     },
-
 }
 
 WIDTH = 1200
