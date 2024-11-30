@@ -101,6 +101,7 @@ while True:
                     activatable_blocks = being.get_activatable_blocks()
                     print(f"Activated output {i}, affecting {len(activatable_blocks)} blocks")
                     print(f"Block type was {activatable_blocks[i]}")
+        being.update()
 
     grid.fill((0, 0, 0))
 

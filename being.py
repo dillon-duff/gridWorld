@@ -6,11 +6,12 @@ import numpy as np
 class Brain:
     def __init__(self, n, j):
         self.n, self.j = n, j
-        self.weights = np.random.rand(n, j)
-        self.biases = np.random.rand(j)
+        self.weights = np.random.uniform(-1, 1, (n, j))
+        self.biases = np.random.uniform(-1, 1, j)
 
     def activate(self, inputs):
-        return np.dot(inputs, self.weights) + self.biases
+        z = np.dot(inputs, self.weights) + self.biases
+        return 1 / (1 + np.exp(-z))
 
 
 class Being:
@@ -28,10 +29,12 @@ class Being:
                     block_class = color_map[self.grid[i, j]]["block_class"]
                     block = block_class(i, j)
                     self.block_grid[i, j] = block
+
+                    # TODO: Add orientation to blocks based on genome
                     
                     # Count sensing areas (inputs)
-                    if hasattr(block, 'sensing_area'):
-                        total_inputs += block.sensing_area
+                    if hasattr(block, 'sensing_length'):
+                        total_inputs += block.sensing_length ** 2
                     
                     # Count activatable blocks (outputs)
                     if hasattr(block, 'isActivatable') and block.isActivatable:
@@ -73,6 +76,7 @@ class Being:
     def update(self):
         inputs = self.get_inputs()
         outputs = self.brain.activate(inputs)
+        print(outputs)
         self.apply_outputs(outputs)
 
     def get_inputs(self):
@@ -80,13 +84,18 @@ class Being:
         for i in range(self.grid.shape[0]):
             for j in range(self.grid.shape[1]):
                 block = self.block_grid[i, j]
-                if block and hasattr(block, 'sensing_area'):
+                if block and hasattr(block, 'sensing_length'):
                     inputs.append(block.get_sense_data(self, self.grid))
 
-        return inputs
+        return [inp for sublist in inputs for inp in sublist]
 
     def apply_outputs(self, outputs):
-        pass
+        activatable_blocks = self.get_activatable_blocks()
+        for i, output in enumerate(outputs):
+            if i < len(activatable_blocks):
+                block = activatable_blocks[i]
+                if output > 0.5:  # Activation threshold, maybe make this a parameter?
+                    block.update_being(self)
 
 class MoverBlock:
     def __init__(self, x, y, orientation=0):
@@ -165,15 +174,41 @@ class NeutralBlock:
 class EyeBlock:
     def __init__(self, x, y, orientation=0):
         self.x, self.y = x, y
-        self.orientation = orientation
-        self.sensing_area = 16
+        self.orientation = orientation  # 0: top-left, 1: top-right, 2: bottom-right, 3: bottom-left
+        self.sensing_length = 4
         self.isActivatable = False
 
     def update_being(self, being):
         pass
 
     def get_sense_data(self, being, grid):
-        pass
+        # - Eye (sensor)
+        # - Sees a square of blocks, where the eye is one of the square's corners
+        sense_data = []
+        
+        # Determine scan ranges based on orientation
+        if self.orientation == 0:  # Top-left corner
+            x_range = range(self.x, self.x + self.sensing_length)
+            y_range = range(self.y, self.y + self.sensing_length)
+        elif self.orientation == 1:  # Top-right corner
+            x_range = range(self.x, self.x + self.sensing_length)
+            y_range = range(self.y, self.y - self.sensing_length, -1)
+        elif self.orientation == 2:  # Bottom-right corner
+            x_range = range(self.x, self.x - self.sensing_length, -1)
+            y_range = range(self.y, self.y - self.sensing_length, -1)
+        else:  # Bottom-left corner (orientation == 3)
+            x_range = range(self.x, self.x - self.sensing_length, -1)
+            y_range = range(self.y, self.y + self.sensing_length)
+            
+        # Scan the square area from the corner
+        for i in x_range:
+            for j in y_range:
+                if 0 <= i < grid.shape[0] and 0 <= j < grid.shape[1]:
+                    sense_data.append(grid[i, j])
+                else:
+                    sense_data.append(-99)  # Out of bounds value
+
+        return sense_data
 
 
 class ReproducerBlock:
@@ -188,7 +223,7 @@ class EarBlock:
     def __init__(self, x, y, orientation=0):
         self.x, self.y = x, y
         self.orientation = orientation
-        self.sensing_area = 16
+        self.sensing_length = 16
         self.isActivatable = False
 
     def update_being(self, being):
