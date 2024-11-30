@@ -69,6 +69,24 @@ class Being:
                 if block and hasattr(block, 'isActivatable') and block.isActivatable:
                     activatable.append(block)
         return activatable
+    
+    def update(self):
+        inputs = self.get_inputs()
+        outputs = self.brain.activate(inputs)
+        self.apply_outputs(outputs)
+
+    def get_inputs(self):
+        inputs = []
+        for i in range(self.grid.shape[0]):
+            for j in range(self.grid.shape[1]):
+                block = self.block_grid[i, j]
+                if block and hasattr(block, 'sensing_area'):
+                    inputs.append(block.get_sense_data(self, self.grid))
+
+        return inputs
+
+    def apply_outputs(self, outputs):
+        pass
 
 class MoverBlock:
     def __init__(self, x, y, orientation=0):
@@ -100,8 +118,34 @@ class RotatorBlock:
         self.x, self.y = x, y
         self.orientation = orientation
         self.isActivatable = True
+    
     def update_being(self, being):
-        pass
+        # Check if all blocks in the 3x3 grid surrounding the RotatorBlock have non-zero values
+        all_nonzero = True
+        for i in range(-1, 2):
+            for j in range(-1, 2):
+                # Check if coordinates are within grid bounds
+                if (0 <= self.x + i < being.grid.shape[0] and 
+                    0 <= self.y + j < being.grid.shape[1]):
+                    if being.grid[self.x + i, self.y + j] == 0:
+                        all_nonzero = False
+                        break
+                else:
+                    all_nonzero = False
+                    break
+            if not all_nonzero:
+                break
+
+        if all_nonzero:
+            # Get valid slice ranges within grid bounds
+            x_start = max(0, self.x - 1)
+            x_end = min(being.grid.shape[0], self.x + 2)
+            y_start = max(0, self.y - 1) 
+            y_end = min(being.grid.shape[1], self.y + 2)
+
+            # Rotate the valid portion of the 3x3 grid
+            rotated_grid = np.rot90(being.grid[x_start:x_end, y_start:y_end], 1)
+            being.grid[x_start:x_end, y_start:y_end] = rotated_grid
 
 class ShieldBlock:
     def __init__(self, x, y):
@@ -128,6 +172,9 @@ class EyeBlock:
     def update_being(self, being):
         pass
 
+    def get_sense_data(self, being, grid):
+        pass
+
 
 class ReproducerBlock:
     def __init__(self, x, y):
@@ -145,6 +192,9 @@ class EarBlock:
         self.isActivatable = False
 
     def update_being(self, being):
+        pass
+
+    def get_sense_data(self, being, grid):
         pass
 
 class CommunicatorBlock:

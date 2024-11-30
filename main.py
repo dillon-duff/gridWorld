@@ -2,7 +2,7 @@ import pygame as pg
 import numpy as np
 from constants import WIDTH, HEIGHT
 from being import Being
-from pygame.locals import *
+import random
 
 class Grid:
     def __init__(self, width, height, cell_size):
@@ -40,24 +40,24 @@ clock = pg.time.Clock()
 
 being_grid = np.zeros((5, 5))
 
-being_grid[0, 1] = 1
-being_grid[0, 2] = 1
-being_grid[0, 3] = 1
+# being_grid[0, 1] = 1
+# being_grid[0, 2] = 1
+# being_grid[0, 3] = 1
 
-being_grid[1, 0] = 1
-being_grid[2, 0] = 1
-being_grid[3, 0] = 1
+# being_grid[1, 0] = 1
+# being_grid[2, 0] = 1
+# being_grid[3, 0] = 1
 
-being_grid[1, 4] = 1
-being_grid[2, 4] = 1
-being_grid[3, 4] = 1
+# being_grid[1, 4] = 1
+# being_grid[2, 4] = 1
+# being_grid[3, 4] = 1
 
 being_grid[4, 1] = 1
 being_grid[4, 2] = 1
 being_grid[4, 3] = 1
 
 being_grid[1, 1] = 2
-being_grid[1, 2] = 3
+being_grid[1, 2] = 4
 being_grid[1, 3] = 2
 
 being_grid[2, 1] = 3
@@ -68,8 +68,15 @@ being_grid[3, 1] = 2
 being_grid[3, 2] = 3
 being_grid[3, 3] = 2
 
+def generate_random_square_grid(size, max_value):
+    grid = np.zeros((size, size))
+    for i in range(size):
+        for j in range(size):
+            grid[i, j] = np.random.randint(0, max_value + 1)
+    return grid
 
-beings = [Being(100, 100, being_grid)]
+
+beings = [Being(100, 100, being_grid)] + [Being(random.randint(0, grid.cols), random.randint(0, grid.rows), generate_random_square_grid(5, 4)) for _ in range(10)]
 
 while True:
     for event in pg.event.get():
@@ -96,7 +103,7 @@ while True:
                     print(f"Block type was {activatable_blocks[i]}")
 
     grid.fill((0, 0, 0))
-    
+
     for being in beings:
         being.draw(grid)
 
